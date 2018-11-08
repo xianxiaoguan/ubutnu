@@ -423,13 +423,21 @@ check_cfg
 
 set -o pipefail
 log_file=$LOG_DIR/TBD_NOSN-$(date +%Y%m%d-%H:%M)
-for (i=0,i<=20,i++);do	
-	run_testlist $TEST_LIST 2>&1 | tee $log_file
-	printf ("当前的运行次数为：%s	\n") $i | tee $log_file
-	if [ $? -ne 0 ];then
-		break
-	fi
+run_20times(){
+for ((i=1;i<=20;i++));do
+        if [ $? -eq 0 ];then
+        run_testlist $TEST_LIST
+        printf "当前的运11行次数为：%s \n" $i
+                if [ $ret -ne 0 ];then
+                         break
+                fi
+        fi
 done
+}
+
+run_20times 2>&1 | tee $log_file
+
+
 ret=$?
 [ $ret -eq 0 ] && result=PASS || result=FAIL
 sed -i 's/[\x8\r]//g' $log_file
